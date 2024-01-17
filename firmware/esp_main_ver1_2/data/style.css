@@ -1,0 +1,181 @@
+
+.divRelayStatus {
+    background-color: #8fbc8f;
+    width: 60px;
+    text-align: center;
+    padding: 5px 15px;
+    font-weight: 600;
+    margin-left: -5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.divRelayTitle {
+    background-color: #7fffd4;
+    padding: 5px 15px;
+    width: 150px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.bgColor05 {
+    background-color: #ffe4c4;
+}
+.bgColor06 {
+    background-color: #deb887;
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.td01 {
+    background: beige;
+    border-radius: 6px;
+    border: 1px solid #d8f5ee;
+    padding: 7px 17px;
+}
+
+.width150 {
+    width: 150%;
+}
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+.btn {border-radius: 3px; display: inline-block;font-size: 14px;font-weight: 400;    text-align: center;    white-space: nowrap;padding: 4px 8px;}
+    .btn-primary {color: #fff;background-color: #337ab7;border-color: #2e6da4;}
+    .btn-info {color: #fff;background-color: #5bc0de;border-color: #46b8da;}
+    .btn-danger {color: #fff;background-color: #26B99A;border-color: #169F85;}
+    .form-input {border-radius: 4px;border: 1px solid #d8f5ee;background: #d8f5ee;padding: 5px;}
+    .fontuse {font-family: sans-serif;}
+    .displayInline {display: inline-block;}
+.inputShowValue {
+    padding: 5px 10px;
+    width: 50px;
+    margin-right: 15px;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.widthDeviceInfo {
+    width: 254px;
+}
+
+.widthDrivername {
+    width: 200px;
+    text-align: left;
+}
+
+.inputcolor-01 {
+    background: content-box;
+}
+
+.mr10 {
+    margin-right: 10px;
+}
+
+.pd510 {
+    padding: 5px 10px
+}
+
+.bgColor02 {
+    background: beige;
+}
+.bgColor03 {
+    background: gainsboro;
+}
+
+.myActivitiesdata p {
+    /*text-decoration:underline;*/
+}
+
+.lineSepa {
+    border-bottom:solid 1px #ddd;
+}
+
+
+
+@media screen and (max-width: 420px) {
+    .h3, h3 {
+        font-size: 23px !important;
+    }
+
+    .h2, h2 {
+        font-size: 21px !important;
+    }
+
+}
+
+@media screen and (max-width: 390px) {
+    .h3, h3 {
+        font-size: 22px !important;
+    }
+    .h2, h2 {
+        font-size: 20px !important;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    .h3, h3 {
+        font-size: 21px !important;
+    }
+    .h2, h2 {
+        font-size: 20px !important;
+    }
+}
+

@@ -1,0 +1,166 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<title>INSITU - TELEMETRY IOT RELAY BOX</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="data:,">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" href="src/bootstrap.min.css" />
+	<script src="src/jquery-3.3.1.min.js"></script>
+	<script src="src/bootstrap.min.js"></script>
+	<script src="src/xlsxmin.min.js"></script>
+
+	<script>
+
+		$(document).ready(function () {
+
+			
+			jQuery.get('eve.txt', function (data, status) {
+				if (status == "success") {
+                    //$('.myTblActivities2').hide();
+					var arr = data.split('|');
+					let isType, getID, getState, isTime, isUserID, isState,aa,bb
+					var userName = "";
+					$(".myTblActivities").append('<tbody><tr class"header"><th>STT</th><th>Camera ID</th><th>Giao diện</th><th>Relay ID</th><th>Trạng thái</th><th>Thời gian</th></tr>');
+					var j = 0;
+					for (var i in arr) {
+							j++;
+							if (arr[i].indexOf("E") != -1 || arr[i].indexOf("W") != -1) {
+									console.log("No"+ j + ":" + arr[i]);
+									var item = arr[i].split(',');
+									console.log("item" + j + " gồm:" + item[0] + item[1] + item[2] + item[3] + item[4]);
+										if (item[1] == "E") {
+											var item1 = "từ Ethernet"
+										} 
+										else if (item[1] == "W") {
+											var item1 = "từ WiFi"
+										}
+										else {
+											var item1 = "N/A"
+										}
+										if (item[3] == "1") {
+											var item3 = "ON - đóng relay"
+										} 
+										else if (item[3] == "0") {
+											var item3 = "OFF - nhả relay"
+										}
+										else {
+											var item3 = "N/A"
+										}
+										var rowItem = `<tr>
+															<td>${j}</td>
+															<td>${item[0]}</td>
+															<td>${item1}</td>
+															<td>${item[2]}</td>											
+															<td>${item3}</td>
+															<td>${item[4]}</td>
+														</tr>`;
+                            			$(".myTblActivities").append(rowItem);
+
+							}
+					}
+					$(".myTblActivities").append('</tbody>');
+					sortTable(0);
+				}
+				else {
+					alert("fail loading text file")
+				}
+			});
+
+			$("#btnExport").click(function () {
+				var workbook = XLSX.utils.book_new();
+
+				//var worksheet_data  =  [['hello','world']];
+				//var worksheet = XLSX.utils.aoa_to_sheet(worksheet_data);
+
+				var worksheet_data = document.getElementById("myTblActivities");
+				var worksheet = XLSX.utils.table_to_sheet(worksheet_data);
+
+				workbook.SheetNames.push("RCBI505LExcel");
+				workbook.Sheets["RCBI505LExcel"] = worksheet;
+
+				exportExcelFile(workbook);
+			});
+
+		});
+
+		function backtomenu() {
+			window.location.replace("/");
+			// window.location.href = "index.html";
+		}
+
+		function exportExcelFile(workbook) {
+			return XLSX.writeFile(workbook, "RCBI505L_API.xlsx");
+		}
+
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("myTblActivities");
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[n];
+                    y = rows[i + 1].getElementsByTagName("td")[n];
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+
+	</script>
+</head>
+
+<body>
+
+  <div class="container">
+		<div class="row">         
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h3 class="fontuse">TELEMETRY IOT RELAY BOX</h3>
+				<h4 class="fontuse">Model: RCB-I505L V1.2</h4>
+				<h5 class="fontuse">Mã thiết bị: <span style="font-weight: bold; font-weight: bold; background-color: khaki; padding: 3px 5px;">%STATE%</span></h5>
+				<br />
+
+				<div>
+					<h2>LỊCH SỬ KÍCH HOẠT RELAY OUT QUA API</h2>
+				</div>
+
+				<div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: 10px; margin-bottom: 10px; ">
+					<input type="button" class="btn btn-sm btn-warning" value="XUẤT EXCEL" id="btnExport">
+					<!--<input type="button" class="btn btn-sm btn-warning isHidden" value="XUẤT EXCEL ẨN" id="btnExportExcel">-->
+				</div>
+
+				<!-- <div class="col-md-12 col-sm-12 col-xs-12">
+					<h4>Danh sách hiển thị 100 sự kiện xảy ra mới nhất. Để xem toàn bộ lịch sự, vui lòng download dữ liệu bằng button Export.</h4>
+				</div> -->
+
+				<iframe id="dummyFrame" style="display:none"> </iframe>
+
+				<div id="mydata"></div>
+				<br />
+
+				<div class="myActivitiesdata" id="myActivitiesdata"></div>
+
+				<table class="table table-striped table-bordered myTblActivities" id="myTblActivities">
+				</table>
+
+				<br />
+
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<input type="submit" class="btn btn-sm btn-danger" value="TRỞ VỀ" onclick="backtomenu()">
+				</div>
+
+			</div>
+		</div>
+  </div>
+  <iframe style="display:none" name="hidden-form"></iframe>
+</body>
+</html>

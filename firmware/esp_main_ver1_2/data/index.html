@@ -1,0 +1,788 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<title>INSITU - TELEMETRY IOT RELAY BOX</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="data:,">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="src/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="src/datetimepicker.min.css" />
+
+	<script src="src/jquery-3.3.1.min.js"></script>
+	<script src="src/bootstrap.min.js"></script>
+	<script src="src/moment.min.js"></script>
+	<script src="src/datetimepicker.min.js"></script>
+
+	<script>
+
+		$(document).ready(function () {
+
+		//alert( "username = " + sessionStorage.getItem("username"));
+			if (sessionStorage.getItem("username") === null) {
+				$("#isAuthenSuccess").hide();
+				$("#isAuthenWaiting").show();
+			}
+			else 
+			{
+				$("#isAuthenSuccess").show();
+				$("#isAuthenWaiting").hide();
+			}
+			
+			
+
+			//Proceed authentication login
+            $("#btnLogin").click(function (e) {
+				e.preventDefault();
+				var myUsername = $("#idUsername").val();
+				var myPassword = $("#idPassword").val();
+				if (myUsername == "") {
+					alert("Vui lòng nhập vào user name");
+					return false;
+				}
+				else if (myPassword == "")
+				{
+					alert("Vui lòng nhập vào mật khẩu");
+					return false;
+				}
+				else {
+					jQuery.get('dPassword.txt', function (data, status) {
+					if (status == "success") {
+						var rootPassword = data;
+						if (myUsername != "root") {
+							alert("Tài khoản đăng nhập không tồn tại, vui lòng thử tài khoản khác");
+							return false;
+						}
+						else if (myPassword === rootPassword) {
+							sessionStorage.setItem("username", rootPassword);
+							//location.reload();
+							window.location.replace("/");
+						}
+						else 
+						{
+							alert("Mật khẩu đăng nhập không đúng, vui lòng thử lại");
+						}
+					}
+					else {
+						alert("fail loading text file")
+					}
+				});		
+				}						
+			});
+
+
+            //Load thông tin Device CODE
+            jQuery.get('dCode.txt', function (data, status) {
+                if (status == "success") {
+                    var myData = data;
+                    console.log("device CODE = " + myData)
+					$('#isDeviceCode').val(myData);
+                }
+                else {
+                    alert("fail loading text file")
+                }
+			});
+
+            //Load thông tin Device description
+            jQuery.get('dDescription.txt', function (data, status) {
+                if (status == "success") {
+                    var myData = data;
+                    console.log("Description info = " + myData)
+                    $('#isVDeviceDescription').val(myData);
+                }
+                else {
+                    alert("fail loading text file")
+                }
+			});
+
+			//LOAD domain by IP
+			jQuery.get('localIP.txt', function (data, status) {
+                if (status == "success") {
+                    var myData = data;
+                    console.log("local IP for domain = " + myData)
+                    $('#isWebLocalIP').val(myData);
+                }
+                else {
+                    alert("fail loading text file")
+                }
+			});
+
+            //Load thông tin trạng thái Internet kết nối 3G
+            jQuery.get('LANs.txt', function (data, status) {
+                if (status == "success") {
+                    var myData = data;
+					console.log("3G connection state= " + myData)
+					if (myData == "TRUE") {
+						$('#isLANStatus').val("CONNECTED");
+						$('#isLANStatus').css('background-color', '#00ced1');
+					}
+                    else if (myData == "FALSE") {
+                        $('#isLANStatus').val("DISCONNECTED");
+                        $('#isLANStatus').css('background-color', '#cd5c5c');
+                    }
+					else {
+						$('#isLANStatus').val("DISCONNECTED");
+                        $('#isLANStatus').css('background-color', '#cd5c5c');
+                    }   
+                }
+				else {
+					console.log("3G connection state: " + status);
+                }
+            });
+
+			//Load Api Input table
+			jQuery.get('camApi1.txt', function (data1, status1) {
+                if (status1 == "success") {
+					var arr1 = data1.split('|');
+                    $('#iPath1').val(arr1[0]);
+					$('#iUsername1').val(arr1[1]);
+					$('#iPassword1').val(arr1[2]);
+                }
+                else {
+                    alert('Load thất bại');
+                }
+			});
+			jQuery.get('camApi2.txt', function (data2, status2) {
+                if (status2 == "success") {
+					var arr2 = data2.split('|');
+                    $('#iPath2').val(arr2[0]);
+					$('#iUsername2').val(arr2[1]);
+					$('#iPassword2').val(arr2[2]);
+                }
+                else {
+                    alert('Load thất bại');
+                }
+			});
+			jQuery.get('camApi3.txt', function (data3, status3) {
+                if (status3 == "success") {
+					var arr3 = data3.split('|');
+                    $('#iPath3').val(arr3[0]);
+					$('#iUsername3').val(arr3[1]);
+					$('#iPassword3').val(arr3[2]);
+                }
+                else {
+                    alert('Load thất bại');
+                }
+			});
+
+			//Load thông tin ETHERNET
+			jQuery.get('eIP.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idLANIPAddress').val(data);
+                }
+                else {
+                    $('#idLANIPAddress').val('Load thất bại');
+                }
+			});
+			jQuery.get('eSUB.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idLANSubnetmask').val(data);
+                }
+                else {
+                    $('#idLANSubnetmask').val('Load thất bại');
+                }
+			}); 
+			jQuery.get('eGW.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idLANDefaultgateway').val(data);
+                }
+                else {
+                    $('#idLANDefaultgateway').val('Load thất bại');
+                }
+			});
+
+
+			//Load thông tin Wifi ACCESS POINT mode
+			jQuery.get('wAPssid.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idWifiSsid').val(data);
+                }
+                else {
+                    $('#idWifiSsid').val('Load thất bại');
+                }
+			});
+			jQuery.get('wAPpass.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idWifiPassword').val(data);
+                }
+                else {
+                    $('#idWifiPassword').val('Load thất bại');
+                }
+			});
+
+			//Load thông tin Wifi STATION MODE
+			jQuery.get('wSTAssid.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idSTAWifi').val(data);
+                }
+                else {
+                    $('#idSTAWifi').val('Load thất bại');
+                }
+			});
+			jQuery.get('wSTApass.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idSTAWifiPassword').val(data);
+                }
+                else {
+                    $('#idSTAWifiPassword').val('Load thất bại');
+                }
+			});
+			jQuery.get('wSTAip.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idSTAWifiIPAddress').val(data);
+                }
+                else {
+                    $('#idSTAWifiIPAddress').val('Load thất bại');
+                }
+			});
+			jQuery.get('wSTAsub.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idSTAWifiSubnetmask').val(data);
+                }
+                else {
+                    $('#idSTAWifiSubnetmask').val('Load thất bại');
+                }
+			}); 
+			jQuery.get('wSTAgw.txt', function (data, status) {
+                if (status == "success") {
+                    $('#idSTAWifiDefaultgateway').val(data);
+                }
+                else {
+                    $('#idSTAWifiDefaultgateway').val('Load thất bại');
+                }
+			});
+
+
+	
+			//view button history relay by API
+            $("#btnViewAPIEvent").click(function (e) {
+				e.preventDefault();
+				window.location.href = "API-event-history.html";
+			});
+
+			//view button history relay by API
+            $("#btnViewInputEvent").click(function (e) {
+                e.preventDefault();
+                window.location.href = "Input-event-history.html";
+            });
+
+
+			// UPDATE WiFi  ( Access Point mode)
+			$("#btnUpdateWiFiAPMode").click(function (e) {
+				e.preventDefault();
+				if ($('#idWifiSsid').val() == "") {
+					alert("Vui lòng nhập WiFi SSID mới.");
+					return false;
+				} else if ($('#idWifiPassword').val() == "") {
+					alert("Vui lòng nhập WiFi password mới.");
+					return false;
+				} else if ($('#idWifiPassword').val().length < 8) {
+                    alert("Mật khẩu phải đủ 8 kí tự");
+                    return false;
+                }
+				else {
+					var mySSID = $('#idWifiSsid').val();
+					var myPassword = $('#idWifiPassword').val();
+					var myDomain = $('#isWebLocalIP').val();
+					var urlWifiAP = `http://${myDomain}/updateWiFiAPMode?mySsid=${mySSID},myPassword=${myPassword}`;
+					console.log(urlWifiAP);
+                    $.get(urlWifiAP, function (data) {
+						console.log(data);
+					});
+					alert("Vui lòng đợi thiết bị khởi động lại và truy cập bằng SSID mới");
+				}
+			});
+
+
+			// UPDATE WiFi  ( Station mode)
+            $("#btnUpdateWiFiSTAMode").click(function (e) {
+                e.preventDefault();
+                if ($('#idSTAWifi').val() == "") {
+                    alert("Vui lòng nhập WiFi SSID sẽ kết nối đến.");
+                    return false;
+                } else if ($('#idSTAWifiPassword').val() == "") {
+                    alert("Vui lòng nhập mật khẩu WiFi sẽ kết nối đến.");
+                    return false;
+                } 
+			 	else if ($('#idSTAWifiIPAddress').val() == "") {
+                    alert("Vui lòng nhập IP tĩnh cho wifi STA.");
+                    return false;
+                } 
+				else if ($('#idSTAWifiSubnetmask').val() == "") {
+                    alert("Vui lòng nhập subnet mask tĩnh cho wifi STA.");
+                    return false;
+                }
+				else if ($('#idSTAWifiDefaultgateway').val() == "") {
+                    alert("Vui lòng nhập gateway tĩnh cho wifi STA.");
+                    return false;
+                }
+				else
+				{
+                    var mySSID = $('#idSTAWifi').val();
+                    var myPassword = $('#idSTAWifiPassword').val();
+					var myIP = $('#idSTAWifiIPAddress').val();
+					var mySubnet = $('#idSTAWifiSubnetmask').val();
+					var myGateway = $('#idSTAWifiDefaultgateway').val();
+					var myDomain = $('#isWebLocalIP').val();
+                    var urlWifiSTA = `http://${myDomain}/updateWiFiSTAMode?mySsid=${mySSID},myPassword=${myPassword},myIP=${myIP},mySubnet=${mySubnet},myGateway=${myGateway}`;
+                    console.log(urlWifiSTA);
+                    $.get(urlWifiSTA, function (data) {
+                        console.log(data);
+                    });
+                    alert("Vui lòng đợi thiết bị khởi động lại và truy cập bằng IP tĩnh mới cấu hình");
+                }
+            });
+
+			// UPDATE Ethernet LAN mode
+            $("#btnLANUpdateLAN").click(function (e) {
+				e.preventDefault();
+				if ($('#idLANIPAddress').val() == "") {
+					alert("Vui lòng nhập địa chỉ IP LAN cho Ethernet");
+					return false;
+				} else if ($('#idLANSubnetmask').val() == "") {
+                    alert("Vui lòng nhập subnet mask LAN cho Ethernet.");
+					return false;
+				} else if ($('#idLANDefaultgateway').val() == "") {
+                    alert("Vui lòng nhập Default gateway LAN cho Ethernet");
+                    return false;
+                }
+				else {
+					var myIP = $('#idLANIPAddress').val();
+					var mySubnet = $('#idLANSubnetmask').val();
+					var myGateway = $('#idLANDefaultgateway').val();
+					var myDomain = $('#isWebLocalIP').val();
+                    var urlEthernet = `http://${myDomain}/updateEthernetInfo?myIP=${myIP},mySubnet=${mySubnet},myGateway=${myGateway}`;
+					console.log(urlEthernet);
+                    $.get(urlEthernet, function (data) {
+						console.log(data);
+					});
+					alert("Vui lòng đợi thiết bị khởi động lại");
+				}
+			});
+
+
+			//UPDATE API input 1
+			$("#btnInPath1").click(function (e) {
+                e.preventDefault();
+                if ($('#iPath1').val() == "") {
+                    alert("Vui lòng nhập vào chuỗi API POST cho input 1");
+                    return false;
+                }
+				else if ($('#iUsername1').val() == "") {
+                    alert("Vui lòng nhập User name cho input 1");
+                    return false;
+                }
+				else if ($('#iPassword1').val() == "") {
+                    alert("Vui lòng nhập Password cho input 1");
+                    return false;
+                }
+				else {
+                    var myPath = $('#iPath1').val();
+					var myUsername = $('#iUsername1').val();
+					var myPassword = $('#iPassword1').val();
+					var myDomain = $('#isWebLocalIP').val();
+                    var urlUpdateInput1 = `http://${myDomain}/updateApiInput1?myPath=${myPath},myUsername=${myUsername},myPassword=${myPassword}`;
+                    console.log(urlUpdateInput1);
+                    $.get(urlUpdateInput1, function (data) {
+                        console.log(data);
+                    });
+					alert("Cập nhật API path cho Input 1 thành công");
+                    window.location.replace("/");
+                }
+			});
+
+			//UPDATE API input 2
+			$("#btnInPath2").click(function (e) {
+                e.preventDefault();
+                if ($('#iPath2').val() == "") {
+                    alert("Vui lòng nhập vào chuỗi API POST cho input 2");
+                    return false;
+                }
+				else if ($('#iUsername2').val() == "") {
+                    alert("Vui lòng nhập User name cho input 2");
+                    return false;
+                }
+				else if ($('#iPassword2').val() == "") {
+                    alert("Vui lòng nhập Password cho input 2");
+                    return false;
+                }
+				else {
+                    var myPath = $('#iPath2').val();
+					var myUsername = $('#iUsername2').val();
+					var myPassword = $('#iPassword2').val();
+					var myDomain = $('#isWebLocalIP').val();
+                    var urlUpdateInput2 = `http://${myDomain}/updateApiInput2?myPath=${myPath},myUsername=${myUsername},myPassword=${myPassword}`;
+                    console.log(urlUpdateInput2);
+                    $.get(urlUpdateInput2, function (data) {
+                        console.log(data);
+                    });
+					alert("Cập nhật API path cho Input 2 thành công");
+                    window.location.replace("/");
+                }
+			});
+
+			//UPDATE API input 3
+			$("#btnInPath3").click(function (e) {
+                e.preventDefault();
+                if ($('#iPath3').val() == "") {
+                    alert("Vui lòng nhập vào chuỗi API POST cho input 3");
+                    return false;
+                }
+				else if ($('#iUsername3').val() == "") {
+                    alert("Vui lòng nhập User name cho input 3");
+                    return false;
+                }
+				else if ($('#iPassword3').val() == "") {
+                    alert("Vui lòng nhập Password cho input 3");
+                    return false;
+                }
+				else {
+                    var myPath = $('#iPath3').val();
+					var myUsername = $('#iUsername3').val();
+					var myPassword = $('#iPassword3').val();
+					var myDomain = $('#isWebLocalIP').val();
+                    var urlUpdateInput3 = `http://${myDomain}/updateApiInput3?myPath=${myPath},myUsername=${myUsername},myPassword=${myPassword}`;
+                    console.log(urlUpdateInput3);
+                    $.get(urlUpdateInput3, function (data) {
+                        console.log(data);
+                    });
+					alert("Cập nhật API path cho Input 3 thành công");
+                    window.location.replace("/");
+                }
+			});
+
+			//UPDATE Device Code
+            $("#btnUpdateDeviceCode").click(function (e) {
+                e.preventDefault();
+                if ($('#isDeviceCode').val() == "") {
+                    alert("Vui lòng nhập Device Code");
+                    return false;
+                } else {
+                    var myDCode = $('#isDeviceCode').val();
+					var myDomain = $('#isWebLocalIP').val();
+                    var urlUpdateDCode = `http://${myDomain}/updateDCode?data=${myDCode}`;
+                    console.log(urlUpdateDCode);
+                    $.get(urlUpdateDCode, function (data) {
+                        console.log(data);
+                    });
+					alert("Cập nhật Device Code thành công");
+                    window.location.replace("/");
+                }
+			});
+
+            // UPDATE device Description
+            $("#btnUpdateDescription").click(function (e) {
+                e.preventDefault();
+                if ($('#isVDeviceDescription').val() == "") {
+                    alert("Vui lòng nhập mô tả thiết bị");
+                    return false;
+                } else {
+                    var myDDescription = $('#isVDeviceDescription').val();
+					var myDomain = $('#isWebLocalIP').val();
+                    var urlUpdateDescription = `http://${myDomain}/updateDescription?data=${myDDescription}`;
+                    console.log(myDomain + "-" + urlUpdateDescription);
+                    $.get(urlUpdateDescription, function (data) {
+                        console.log(data);
+                    });
+                    alert("Cập nhật thông tin thiết bị thành công");
+                    window.location.replace("/");
+                }
+			});
+
+			// CHANGE device password 
+			$("#btnChangeDPass").click(function (e) {
+                e.preventDefault();
+                if ($('#idNewDPass').val() == "") {
+                    alert("Vui lòng nhập vào mật khẩu, không để trống");
+                    return false;
+                } else {
+					if (confirm('Bạn có chắc chắn muốn đổi sang Mật khẩu mới này?')) {
+						// Save it!
+						console.log('Proceed change device new password');
+						var myPassword = $('#idNewDPass').val();
+						var myDomain = $('#isWebLocalIP').val();
+						var urlUpdateDevicePassword = `http://${myDomain}/updateDevicePassword?data=${myPassword}`;
+						$.get(urlUpdateDevicePassword, function (data) {
+							console.log(data);
+						});
+						alert("Cập nhật thông tin thiết bị thành công");
+                    // window.location.replace("/");
+						$('#idNewDPass').val("");
+					} else {
+						// Do nothing!
+						$('#idNewDPass').val("");
+					}
+                }
+			});
+		
+		});   //$document
+
+
+	</script>
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<h3 class="fontuse">TELEMETRY IOT RELAY BOX</h3>
+				<h4 class="fontuse">Model: RCB-I505L V1.2</h4>
+				<h5 class="fontuse">ID thiết bị: <span style="font-weight: bold; font-weight: bold; background-color: khaki; padding: 3px 5px;">%STATE%</span></h5>
+				<br />
+			</div>
+
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="isAuthenWaiting" style="display:none">
+				<!-- Login form  -->
+					<h3 style="text-transform:uppercase;">ĐĂNG NHẬP THIẾT BỊ</h3>
+					<br>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Tên đăng nhập:</p>
+						<input class="form-control" type="text" id="idUsername" value="" placeholder="nhập user name" style="margin-left: 10px;" />
+					</div>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Mật khẩu:</p>
+						<input class="form-control" type="text" id="idPassword" value="" placeholder="nhập password " style="margin-left: 46px;" />
+					</div>
+					<input type="button" class="btn btn-info" id="btnLogin" style="background-color: cornflowerblue;margin: 8px;" value="Đăng nhập" />
+
+					<div class="lineSepa"></div>
+
+			</div>
+
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="isAuthenSuccess" style="display:none">
+				<div style="height: auto; padding: 5px 0px;">
+					<p class="fontuse displayInline" style="margin-right: 20px;">Mã định danh thiết bị: </p>
+					<input type="text" class="form-input inputDeviceInfo widthDeviceInfo" min="0" max="200" id="isDeviceCode" name="isDeviceCode" value="No_Info">
+					<input type="button" class="btn btn-md btn-info mr10" value="Update" id="btnUpdateDeviceCode">
+				</div>
+				<div style="height: auto; padding: 5px 0px;">
+					<p class="fontuse displayInline" style="margin-right: 70px;">Mô tả thiết bị: </p>
+					<input type="text" class="form-input inputDeviceInfo widthDeviceInfo" min="0" max="200" id="isVDeviceDescription" name="isVDeviceDescription" value="No_Info">
+					<input type="button" class="btn btn-md btn-info mr10" value="Update" id="btnUpdateDescription">
+				</div>
+				<div style="height: auto; padding: 5px 0px;">
+					<p class="fontuse displayInline" style="margin-right: 100px;">Local IP: </p>
+					<input type="text" class="form-input inputDeviceInfo widthDeviceInfo" id="isWebLocalIP" name="isWebLocalIP" value="No_data" disabled="disabled">
+				</div>
+
+				
+				<br />
+				<div class="lineSepa"></div>
+				<br>
+				<div style="height: auto; padding: 5px 0px;">
+					<p class="fontuse displayInline" style="margin-right: 37px; margin-left: 25px;">Trạng thái kết nối LAN: </p>
+					<input type="text" class="form-input inputDeviceInfo input3GStatus" id="isLANStatus" name="isLANStatus" value="Connected" disabled style="width: 201px;text-align: center;">
+				</div>
+
+				<div class="lineSepa"></div>
+
+				<!----Session: GIÁM SÁT RELAY STATUS-->
+				<div class="col-lg-12  col-md-12 col-sm-12 col-xs-12">
+					<h3 style="text-transform:uppercase;">TRẠNG THÁI RELAY VÀ INPUT</h3>
+					<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+						<div>
+							<div class="divRelayTitle displayInline">Relay Output <strong>1</strong></div>
+							<div class="divRelayStatus displayInline">%StateRelay1%</div>
+						</div>
+						<div>
+							<div class="divRelayTitle displayInline">Relay Output <strong>2</strong></div>
+							<div class="divRelayStatus displayInline">%StateRelay2%</div>
+						</div>
+						<div>
+							<div class="divRelayTitle displayInline">Relay Output <strong>3</strong></div>
+							<div class="divRelayStatus displayInline">%StateRelay3%</div>
+						</div>
+						<div>
+							<div class="divRelayTitle displayInline">Relay Output <strong>4</strong></div>
+							<div class="divRelayStatus displayInline">%StateRelay4%</div>
+						</div>
+						<div>
+							<div class="divRelayTitle displayInline">Relay Output <strong>5</strong></div>
+							<div class="divRelayStatus displayInline">%StateRelay5%</div>
+						</div>
+						<br/>
+						<div class="lineSepa"></div>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+						<div>
+							<div class="divRelayTitle displayInline bgColor05">Input tiếp điểm <strong>1</strong></div>
+							<div class="divRelayStatus displayInline bgColor06">%StateInput1%</div>
+						</div>
+						<div>
+							<div class="divRelayTitle displayInline bgColor05">Input tiếp điểm <strong>2</strong></div>
+							<div class="divRelayStatus displayInline bgColor06">%StateInput2%</div>
+						</div>
+						<div>
+							<div class="divRelayTitle displayInline bgColor05">Input tiếp điểm <strong>3</strong></div>
+							<div class="divRelayStatus displayInline bgColor06">%StateInput3%</div>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+
+					</div>
+					
+
+					
+				</div>
+
+
+
+				<!----button go to history view Trigger Relay by API-->
+				<div class="pd510" style="height:auto; display: inline-flex;">
+					<p class="fontuse displayInline" style="margin-right: 54px; padding-top: 15px;">- Lịch sử kích hoạt Relay bằng API: </p>
+					<input type="button" id="btnViewAPIEvent" class="btn btn-md btn-warning mr10" style="padding-top: 15px; padding-bottom: 15px;" value="XEM">
+				</div>
+
+				<div class="lineSepa"></div>
+
+				<!----button go to history view trigger relay by input button-->
+				<div class="pd510" style="height:auto; display: inline-flex;">
+					<p class="fontuse displayInline" style="margin-right: 15px; padding-top: 15px;">- Lịch sử kích hoạt Relay bằng Nút nhấn	: </p>
+					<input type="button" id="btnViewInputEvent" class="btn btn-md btn-warning mr10" style="padding-top: 15px; padding-bottom: 15px;" value="XEM">
+				</div>
+
+				<div class="lineSepa"></div>
+
+				<br/>
+				<!----Session: API POST back Camera-->
+				<div class="col-lg-11 col-md-11 col-sm-12 col-xs-12">
+					<h3 style="text-transform:uppercase;">CẤU HÌNH API POST BACK CAMERA</h3>
+
+					<table class="table table-striped table-bordered">
+						<tbody>
+							<tr class"header">
+								<th style="WIDTH: 15%;text-align: center;">Input No</th>
+								<th style="WIDTH: 50%;text-align: center;	">API path Camera</th>
+								<th style="text-align: center;">User name</th>
+								<th style="text-align: center;">Password</th>
+								<th style="WIDTH: 8%;text-align: center;">Cật nhật</th>
+							</tr>
+							<tr>
+								<td style="text-align: center;">Input 1</td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iPath1" placeholder="nhập vào API path camera" style="font-size: 12px;" /></td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iUsername1" placeholder="nhâp User name" style="font-size: 12px;" /></td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iPassword1" placeholder="nhâp Mật khẩu" style="font-size: 12px;" /></td>
+								<td><input type="button" class="btn btn-xs btn-info" id="btnInPath1" value="Update"/></td>
+							</tr>
+							<tr>
+								<td style="text-align: center;">Input 2</td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iPath2" placeholder="nhập vào API path camera" style="font-size: 12px;" /></td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iUsername2" placeholder="nhâp User name" style="font-size: 12px;" /></td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iPassword2" placeholder="nhâp Mật khẩu" style="font-size: 12px;" /></td>
+								<td><input type="button" class="btn btn-xs btn-info" id="btnInPath2" value="Update"/></td>
+							</tr>
+							<tr>
+								<td style="text-align: center;">Input 3</td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iPath3" placeholder="nhập vào API path camera" style="font-size: 12px;" /></td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iUsername3" placeholder="nhâp User name" style="font-size: 12px;" /></td>
+								<td style="padding: 2px;"><input type="text" class="form form-control" id="iPassword3" placeholder="nhâp Mật khẩu" style="font-size: 12px;" /></td>
+								<td><input type="button" class="btn btn-xs btn-info" id="btnInPath3" value="Update"/></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!----Session: ETHERNET-->
+				<div class="col-lg-12  col-md-12 col-sm-12 col-xs-12">
+					<h3 style="text-transform:uppercase;">CẤU HÌNH ETHERNET (Fixed IP)</h3>
+					<br>
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Địa chỉ IP:</p>						
+						<input class="form-control" type="text" id="idLANIPAddress" value="" placeholder="nhập IP address tĩnh" style="margin-left: 50px;" />
+					</div>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Subnet mask:</p>						
+						<input class="form-control" type="text" id="idLANSubnetmask" value="" placeholder="nhập Subnet mask tĩnh" style="margin-left: 29px;" />
+					</div>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Default gateway:</p>						
+						<input class="form-control" type="text" id="idLANDefaultgateway" value="" placeholder="nhập default gateway tĩnh" style="margin-left: 10px;" />
+					</div>
+					<input type="button" class="btn btn-info" id="btnLANUpdateLAN" style="margin: 8px; background-color: cadetblue;" value="Cập nhật" />
+
+					<div class="lineSepa"></div>
+				</div>
+
+				<!----Session: WIFI ACCESS POINT-->
+				<div class="col-lg-12  col-md-12 col-sm-12 col-xs-12">
+					<h3 style="text-transform:uppercase;">CẤU HÌNH WIFI (Access Point mode)</h3>
+					<br>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Tên SSID:</p>
+						<input class="form-control" type="text" id="idWifiSsid" value="" placeholder="nhập SSID mới" style="margin-left: 10px;" />
+					</div>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Mật khẩu:</p>
+						<input class="form-control" type="text" id="idWifiPassword" value="" placeholder="nhập password mới" style="margin-left: 14px;" />
+					</div>
+					<input type="button" class="btn btn-info" id="btnUpdateWiFiAPMode" style="background-color: cornflowerblue;margin: 8px;" value="Cập nhật" />
+
+					<div class="lineSepa"></div>
+				</div>
+
+				<br />
+
+				<!----Session: WIFI STATION MODE-->
+				<div class="col-lg-12  col-md-12 col-sm-12 col-xs-12">
+					<h3 style="text-transform:uppercase;">CẤU HÌNH WIFI (Station mode)</h3>
+					<br>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Tên WiFi đích kết nối:</p>
+						<input class="form-control" type="text" id="idSTAWifi" value="" placeholder="nhập SSID AP phát wifi" style="margin-left: 5px;" />
+					</div>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Mật khẩu:</p>
+						<input class="form-control" type="text" id="idSTAWifiPassword" value="" placeholder="nhập password Wifi" style="margin-left: 79px;"/>
+					</div>
+
+					<br>
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Địa chỉ IP tĩnh:</p>						
+						<input class="form-control" type="text" id="idSTAWifiIPAddress" value="" placeholder="nhập IP address tĩnh cho Wifi" style="margin-left: 50px;" />
+					</div>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Subnet mask tĩnh:</p>						
+						<input class="form-control" type="text" id="idSTAWifiSubnetmask" value="" placeholder="nhập Subnet mask tĩnh cho Wifi" style="margin-left: 28px;" />
+					</div>
+
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Default gateway tĩnh:</p>						
+						<input class="form-control" type="text" id="idSTAWifiDefaultgateway" value="" placeholder="nhập default gateway tĩnh cho Wifi" style="margin-left: 9px;" />
+					</div>
+
+
+					<input type="button" class="btn btn-info" id="btnUpdateWiFiSTAMode" style="margin: 8px;background-color: darkslategray;" value="CONNECT" />
+
+					<div class="lineSepa"></div>
+				</div>
+
+				<!----Session: CHANGE SYSTEM PASSWORD-->
+				<div class="col-lg-12  col-md-12 col-sm-12 col-xs-12">
+					<h3 style="text-transform:uppercase;">ĐỔI MẬT KHẨU HỆ THỐNG</h3>
+					<br>
+					<div class="form-inline" style="margin-top:5px">
+						<p class="fontuse displayInline">- Nhập mật khẩu mới:</p>
+						<input class="form-control" type="text" id="idNewDPass" value="" placeholder="nhập password mới" style="margin-left: 14px;" />
+					</div>
+					<input type="button" class="btn btn-info" id="btnChangeDPass" style="background-color: cornflowerblue;margin: 8px;" value="Thay đổi" />
+
+					<div class="lineSepa"></div>
+				</div>
+
+				<br />
+			</div>
+		</div>
+	</div>
+	<iframe style="display:none" name="hidden-form"></iframe>
+	
+</body>
+</html>
